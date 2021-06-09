@@ -1,11 +1,41 @@
 import numpy as np
 
 
+# список нборов адресов, представляющих из себя "линии" возможных решений
+solution_address_set = [[(0, 0), (0, 1), (0, 2)],
+                        [(1, 0), (1, 1), (1, 2)],
+                        [(2, 0), (2, 1), (2, 2)],
+                        [(0, 0), (1, 0), (2, 0)],
+                        [(0, 1), (1, 1), (2, 1)],
+                        [(0, 2), (1, 2), (2, 2)],
+                        [(0, 0), (1, 1), (2, 2)],
+                        [(2, 0), (1, 1), (0, 2)],
+                        ]
+
+
 def print_play_field(play_field_list):
     '''Процедура отрисовывает игровое поле в консоле.'''
     print('    0  1  2')  # нумирация столбцов
     for i in range(0, 3):  # цикл отрисовки строк
         print(i, ' ', '  '.join(play_field_list[i]))
+
+
+def checking_for_win(play_field_list):
+    '''Функция проверяет не наступил ли выигрыш.
+       Если наступил, то возвращает победителя ("x" или "o").
+       Аргументом на входе функции является игровое поле, которое надо оценить.'''
+    for line_list in solution_address_set:
+        winner = ''
+        cell = line_list[0]
+        if play_field_list[cell[0]][cell[1]] != '-':
+            winner = play_field_list[cell[0]][cell[1]]
+            cell = line_list[1]
+            if winner == play_field_list[cell[0]][cell[1]]:
+                cell = line_list[2]
+                if winner == play_field_list[cell[0]][cell[1]]:
+                    break
+        winner = ''
+    return winner
 
 
 def move_user(play_field_list):
@@ -64,8 +94,20 @@ def one_game(score_user_comp):
         else:
             play_field_list = move_computer(play_field_list)
             move_user_bool = True
-        # проверяем не закончилась ли игра
-    score_user_comp[0] = score_user_comp[0] + 1
+        # проверяем не появился ли победитель
+        winner = checking_for_win(play_field_list)
+        if winner:
+            if winner == 'x':
+                print_play_field(play_field_list)  # выводим итоговую ситуацию на игровом поле
+                print('Вы победили!')
+                score_user_comp[0] += 1     # засчитываем очко игроку
+            else:
+                print_play_field(play_field_list)  # выводим итоговую ситуацию на игровом поле
+                print('Победил компьютер.')
+                score_user_comp[1] += 1     # засчитываем очко компьютеру
+            break
+    if not winner:
+        print('Ничья!')
     return score_user_comp
 
 
@@ -84,7 +126,7 @@ def tic_tac_toe():
             elif score_user_comp[0] < score_user_comp[1]:
                 favorite_to_post = '. Компьютер ведёт.'
             else:
-                favorite_to_post = '. Ничья.'
+                favorite_to_post = '. Счёт выровнялся.'
             print(f'Счёт {score_user_comp[0]} : {score_user_comp[1]}{favorite_to_post}')
     print('Может в другой раз? Счастливо!')
 
