@@ -71,12 +71,14 @@ def game_core_v4(number):
         count += 1
         predict = int((begin + end)/2)  # согласно алгоритму всегда выбираем число в середине оставшегося диапозона
         # print(predict, number)  # для отладки - при желании можно посмотреть процесс происка
-        if number == predict:
+        if predict == number:
             return count  # выход из цикла, если угадали
         if number < predict:
             end = predict - 1
-        if number > predict:
+            # end = predict   # так можно и результат тот же... похоже всё дело в нюансах округления при поиске середины
+        else:
             begin = predict + 1
+            # begin = predict       # так ошибка
 
 
 def score_game(game_core):
